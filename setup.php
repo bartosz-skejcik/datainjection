@@ -217,6 +217,10 @@ function getTypesToInject(): void
         'PluginDatainjectionApplianceInjection'                   => 'datainjection',
         'PluginDatainjectionCertificateInjection'                 => 'datainjection',
     ];
+
+    // Add custom asset definitions (GLPI 11+)
+    plugin_datainjection_addCustomAssetTypes($INJECTABLE_TYPES);
+
     //Add plugins
     Plugin::doHook('plugin_datainjection_populate');
 }
@@ -241,4 +245,44 @@ function plugin_datainjection_geturl(): string
     /** @var array $CFG_GLPI */
     global $CFG_GLPI;
     return sprintf('%s/plugins/datainjection/', $CFG_GLPI['root_doc']);
+}
+
+
+/**
+ * Add custom asset definitions to injectable types (GLPI 11+)
+ *
+ * @param array $injectable_types Reference to the injectable types array
+ * @return void
+ */
+function plugin_datainjection_addCustomAssetTypes(array &$injectable_types): void
+{
+    // Check if GLPI 11+ custom asset classes are available
+    if (!class_exists('Glpi\\Asset\\AssetDefinitionManager')) {
+        return;
+    }
+
+    try {
+        $manager = \Glpi\Asset\AssetDefinitionManager::getInstance();
+        $definitions = $manager->getDefinitions(true); // Only get active definitions
+
+        foreach ($definitions as $definition) {
+            $system_name = $definition->fields['system_name'];
+
+            // Register the asset injection class
+            $asset_injection_class = PluginDatainjectionCustomAssetInjectionFactory::getInjectionClass($definition);
+            $injectable_types[$asset_injection_class] = 'datainjection';
+
+            // Register the asset model injection class
+            $model_injection_class = PluginDatainjectionCustomAssetModelInjectionFactory::getInjectionClass($definition);
+            $injectable_types[$model_injection_class] = 'datainjection';
+
+            // Register the asset type injection class
+            $type_injection_class = PluginDatainjectionCustomAssetTypeInjectionFactory::getInjectionClass($definition);
+            $injectable_types[$type_injection_class] = 'datainjection';
+        }
+    } catch (\Exception $e) {
+        // Silently fail if custom assets are not properly configured
+        // This ensures backward compatibility
+        Toolbox::logError('DataInjection: Failed to load custom asset definitions: ' . $e->getMessage());
+    }
 }

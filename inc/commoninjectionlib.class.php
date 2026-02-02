@@ -339,6 +339,39 @@ class PluginDatainjectionCommonInjectionLib
     */
     public static function getInjectionClassInstance($itemtype)
     {
+        // Handle GLPI 11+ custom asset classes (namespaced)
+        if (
+            class_exists('Glpi\\Asset\\AssetDefinitionManager')
+            && (
+                is_a($itemtype, 'Glpi\\Asset\\Asset', true)
+                || is_a($itemtype, 'Glpi\\Asset\\AssetModel', true)
+                || is_a($itemtype, 'Glpi\\Asset\\AssetType', true)
+            )
+        ) {
+            // Extract the system name from the class (e.g., Glpi\CustomAsset\VehicleAsset -> Vehicle)
+            $class_basename = (new \ReflectionClass($itemtype))->getShortName();
+
+            if (is_a($itemtype, 'Glpi\\Asset\\AssetModel', true)) {
+                // Handle AssetModel (e.g., VehicleAssetModel -> PluginDatainjectionVehicleAssetModelInjection)
+                $system_name = preg_replace('/AssetModel$/', '', $class_basename);
+                $injectionClass = 'PluginDatainjection' . $system_name . 'AssetModelInjection';
+            } elseif (is_a($itemtype, 'Glpi\\Asset\\AssetType', true)) {
+                // Handle AssetType (e.g., VehicleAssetType -> PluginDatainjectionVehicleAssetTypeInjection)
+                $system_name = preg_replace('/AssetType$/', '', $class_basename);
+                $injectionClass = 'PluginDatainjection' . $system_name . 'AssetTypeInjection';
+            } else {
+                // Handle Asset (e.g., VehicleAsset -> PluginDatainjectionVehicleAssetInjection)
+                $system_name = preg_replace('/Asset$/', '', $class_basename);
+                $injectionClass = 'PluginDatainjection' . $system_name . 'AssetInjection';
+            }
+
+            if (class_exists($injectionClass) && is_a($injectionClass, PluginDatainjectionInjectionInterface::class, true)) {
+                return new $injectionClass();
+            }
+
+            // Injection class not found - it might not have been created yet
+            throw new HttpException(500, 'Injection class ' . $injectionClass . ' not found for custom asset ' . $itemtype);
+        }
 
         if (!isPluginItemType($itemtype)) {
             $injectionClass = 'PluginDatainjection' . ucfirst($itemtype) . 'Injection';
