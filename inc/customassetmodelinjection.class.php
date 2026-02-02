@@ -205,18 +205,18 @@ class {$class_name} extends {$model_class} implements PluginDatainjectionInjecti
     {
         \$definition = static::getDefinition();
         \$model_class = \$definition->getAssetModelClassName();
-        
+
         \$tab = Search::getOptions(\$model_class);
-        
+
         \$blacklist = PluginDatainjectionCommonInjectionLib::getBlacklistedOptions(\$model_class);
-        
+
         \$options['ignore_fields'] = \$blacklist;
-        
+
         \$options['displaytype'] = [
             "multiline_text" => [16],
             "integer"        => [],
         ];
-        
+
         return PluginDatainjectionCommonInjectionLib::addToSearchOptions(\$tab, \$options, \$this);
     }
 
@@ -224,11 +224,11 @@ class {$class_name} extends {$model_class} implements PluginDatainjectionInjecti
     {
         \$definition = static::getDefinition();
         \$itemtype = \$definition->getAssetModelClassName();
-        
+
         if (isset(\$values[\$itemtype])) {
             \$values[\$itemtype]['assets_assetdefinitions_id'] = \$definition->getID();
         }
-        
+
         \$lib = new PluginDatainjectionCommonInjectionLib(\$this, \$values, \$options);
         \$lib->processAddOrUpdate();
         return \$lib->getInjectionResults();

@@ -27,6 +27,7 @@
  * @link      https://github.com/pluginsGLPI/datainjection
  * -------------------------------------------------------------------------
  */
+
 use Glpi\Exception\Http\HttpException;
 
 use function Safe\preg_match;
@@ -117,24 +118,32 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Set default values for injection parameters
-    *
-    * @return void nothing
-   **/
+     * Set default values for injection parameters
+     *
+     * @return void nothing
+     **/
     public function setDefaultValues(): void
     {
 
-        $this->checks = ['ip'           => false, 'mac'          => false,
-            'integer'      => false, 'yes'          => false,
-            'bool'         => false, 'date'         => false,
-            'float'        => false, 'string'       => false,
-            'right_r'      => false, 'right_rw'     => false,
-            'interface'    => false, 'auth_method'  => false,
+        $this->checks = [
+            'ip'           => false,
+            'mac'          => false,
+            'integer'      => false,
+            'yes'          => false,
+            'bool'         => false,
+            'date'         => false,
+            'float'        => false,
+            'string'       => false,
+            'right_r'      => false,
+            'right_rw'     => false,
+            'interface'    => false,
+            'auth_method'  => false,
             'port_unicity' => false,
         ];
 
         //Rights options
-        $this->rights = ['add_dropdown'              => false,
+        $this->rights = [
+            'add_dropdown'              => false,
             'overwrite_notempty_fields' => false,
             'can_add'                   => false,
             'can_update'                => false,
@@ -143,23 +152,24 @@ class PluginDatainjectionCommonInjectionLib
         ];
 
         //Field format options
-        $this->formats = ['date_format'  => self::DATE_TYPE_YYYYMMDD,
+        $this->formats = [
+            'date_format'  => self::DATE_TYPE_YYYYMMDD,
             'float_format' => self::FLOAT_TYPE_COMMA,
         ];
     }
 
 
     /**
-    * Constructor : store all needed options into the library
-    *
-    * @param PluginDatainjectionInjectionInterface $injectionClass            class which represents the itemtype to injection
-    *                                   (in 0.80, will be directly the itemtype class)
-    * @param array|null $values              array values to injection into GLPI
-    * @param array|null $injection_options   array options that can be used during the injection
-    *                                   (maybe an empty array)
-    *
-    * @return void nothing
-   **/
+     * Constructor : store all needed options into the library
+     *
+     * @param PluginDatainjectionInjectionInterface $injectionClass            class which represents the itemtype to injection
+     *                                   (in 0.80, will be directly the itemtype class)
+     * @param array|null $values              array values to injection into GLPI
+     * @param array|null $injection_options   array options that can be used during the injection
+     *                                   (maybe an empty array)
+     *
+     * @return void nothing
+     **/
     public function __construct($injectionClass, $values = [], $injection_options = [])
     {
 
@@ -194,7 +204,8 @@ class PluginDatainjectionCommonInjectionLib
         if (isset($injection_options['formats'])) {
             $this->formats = $injection_options['formats'];
         } else {
-            $this->formats = ['date_format'  => self::DATE_TYPE_YYYYMMDD,
+            $this->formats = [
+                'date_format'  => self::DATE_TYPE_YYYYMMDD,
                 'float_format' => self::FLOAT_TYPE_DOT,
             ];
         }
@@ -212,11 +223,11 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Check and add fields for itemtype which depend on other itemtypes
-    * (for example SoftwareLicense needs to be linked to a Software)
-    *
-    * @param PluginDatainjectionInjectionInterface $injectionClass class to use for injection
-   **/
+     * Check and add fields for itemtype which depend on other itemtypes
+     * (for example SoftwareLicense needs to be linked to a Software)
+     *
+     * @param PluginDatainjectionInjectionInterface $injectionClass class to use for injection
+     **/
     public function areTypeMandatoryFieldsOK($injectionClass)
     {
 
@@ -250,7 +261,7 @@ class PluginDatainjectionCommonInjectionLib
                 if (
                     ($value === false)
                     || (($value == self::DROPDOWN_EMPTY_VALUE)
-                    && self::isFieldADropdown($option['displaytype']))
+                        && self::isFieldADropdown($option['displaytype']))
                 ) {
                     $status_check = false;
                     $this->results[self::ACTION_CHECK][] = [self::MANDATORY, $option['name']];
@@ -262,30 +273,35 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Check if a field type represents a dropdown or not
-    *
-    * @param string $field_type the type of field
-    *
-    * @return boolean true if it's a dropdown type, false if not
-   **/
+     * Check if a field type represents a dropdown or not
+     *
+     * @param string $field_type the type of field
+     *
+     * @return boolean true if it's a dropdown type, false if not
+     **/
     public static function isFieldADropdown($field_type)
     {
         return !in_array(
             $field_type,
-            ['integer', 'decimal', 'tree',
-                'text', 'multiline_text', 'date',
+            [
+                'integer',
+                'decimal',
+                'tree',
+                'text',
+                'multiline_text',
+                'date',
             ],
         );
     }
 
 
     /**
-    * Return an the class of an item by giving his injection class
-    *
-    * @param string $injectionClassName the injection class name
-    *
-    * @return CommonDBTM instance of the itemtype associated to the injection class name
-    */
+     * Return an the class of an item by giving his injection class
+     *
+     * @param string $injectionClassName the injection class name
+     *
+     * @return CommonDBTM instance of the itemtype associated to the injection class name
+     */
     public static function getItemtypeInstanceByInjection($injectionClassName)
     {
 
@@ -301,12 +317,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get an itemtype name by giving his injection class name
-    *
-    * @param string $injectionClassName the injection class name
-    *
-    * @return string the itemtype associated
-    */
+     * Get an itemtype name by giving his injection class name
+     *
+     * @param string $injectionClassName the injection class name
+     *
+     * @return string the itemtype associated
+     */
     public static function getItemtypeByInjection($injectionClassName)
     {
         if (!is_a($injectionClassName, CommonDBTM::class, true)) {
@@ -317,12 +333,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get an itemtype by giving an injection class object
-    *
-    * @param object $injectionClass Name the injection class object
-    *
-    * @return string instance of the itemtype associated to the injection class
-    */
+     * Get an itemtype by giving an injection class object
+     *
+     * @param object $injectionClass Name the injection class object
+     *
+     * @return string instance of the itemtype associated to the injection class
+     */
     public static function getItemtypeByInjectionClass($injectionClass)
     {
 
@@ -331,12 +347,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get an injection class instance for an itemtype
-    *
-    * @param string $itemtype  the itemtype
-    *
-    * @return PluginDatainjectionInjectionInterface the injection class instance
-    */
+     * Get an injection class instance for an itemtype
+     *
+     * @param string $itemtype  the itemtype
+     *
+     * @return PluginDatainjectionInjectionInterface the injection class instance
+     */
     public static function getInjectionClassInstance($itemtype)
     {
         // Handle GLPI 11+ custom asset classes (namespaced)
@@ -386,12 +402,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Add blacklisted fields for an itemtype
-    *
-    * @param string $itemtype the itemtype
-    *
-    * @return array the array of all blacklisted fields
-    */
+     * Add blacklisted fields for an itemtype
+     *
+     * @param string $itemtype the itemtype
+     *
+     * @return array the array of all blacklisted fields
+     */
     public static function getBlacklistedOptions($itemtype)
     {
         /** @var array $CFG_GLPI */
@@ -466,13 +482,13 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Find and return the right search option
-    *
-    * @param array $options the search options array
-    * @param string $lookfor the search option we're looking for
-    *
-    * @return array the search option matching lookfor parameter or false it not found
-   **/
+     * Find and return the right search option
+     *
+     * @param array $options the search options array
+     * @param string $lookfor the search option we're looking for
+     *
+     * @return array the search option matching lookfor parameter or false it not found
+     **/
     public static function findSearchOption($options, $lookfor)
     {
 
@@ -495,10 +511,10 @@ class PluginDatainjectionCommonInjectionLib
     //------------------------------------------------//
 
     /**
-    * Get date format used for injection
-    *
-    * @return string date format used
-   **/
+     * Get date format used for injection
+     *
+     * @return string date format used
+     **/
     private function getDateFormat()
     {
 
@@ -507,10 +523,10 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get date format used for injection
-    *
-    * @return string date format used
-   **/
+     * Get date format used for injection
+     *
+     * @return string date format used
+     **/
     private function getFloatFormat()
     {
 
@@ -519,10 +535,10 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get itemtype associated to the injectionClass
-    *
-    * @return CommonDBTM an itemtype
-   **/
+     * Get itemtype associated to the injectionClass
+     *
+     * @return CommonDBTM an itemtype
+     **/
     private function getItemInstance()
     {
 
@@ -532,10 +548,10 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Return injection results
-    *
-    * @return array which contains the reformat/check/injection logs
-   **/
+     * Return injection results
+     *
+     * @return array which contains the reformat/check/injection logs
+     **/
     public function getInjectionResults()
     {
 
@@ -544,10 +560,10 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get ID associate to the value from the CSV file is needed (for example for dropdown tables)
-    *
-    * @return void nothing
-   **/
+     * Get ID associate to the value from the CSV file is needed (for example for dropdown tables)
+     *
+     * @return void nothing
+     **/
     private function manageFieldValues()
     {
 
@@ -565,7 +581,7 @@ class PluginDatainjectionCommonInjectionLib
                     if (
                         !empty($searchOption)
                         && ((isset($searchOption['displaytype']) && $searchOption['displaytype'] != 'relation')
-                        || !isset($searchOption['displaytype']))
+                            || !isset($searchOption['displaytype']))
                     ) {
                         $this->getFieldValue($injectionClass, $itemtype, $searchOption, $field, $value);
                     }
@@ -583,17 +599,17 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get the ID associated with a value from the CSV file
-    *
-    * @param PluginDatainjectionInjectionInterface|null $injectionClass
-    * @param string $itemtype               itemtype of the values to inject
-    * @param array $searchOption           option associated with the field to check
-    * @param string $field                  the field to check
-    * @param string $value                  the value coming from the CSV file
-    * @param boolean $add                    is insertion (true) or update (false) (true by default)
-    *
-    * @return void nothing
-   **/
+     * Get the ID associated with a value from the CSV file
+     *
+     * @param PluginDatainjectionInjectionInterface|null $injectionClass
+     * @param string $itemtype               itemtype of the values to inject
+     * @param array $searchOption           option associated with the field to check
+     * @param string $field                  the field to check
+     * @param string $value                  the value coming from the CSV file
+     * @param boolean $add                    is insertion (true) or update (false) (true by default)
+     *
+     * @return void nothing
+     **/
     private function getFieldValue(
         $injectionClass,
         $itemtype,
@@ -695,7 +711,8 @@ class PluginDatainjectionCommonInjectionLib
                 if ($value && $id <= 0) {
                     $this->results['status']                     = self::WARNING;
                     $this->results[self::ACTION_CHECK]['status'] = self::WARNING;
-                    $this->results[self::ACTION_CHECK][]         = [self::WARNING_NOTFOUND,
+                    $this->results[self::ACTION_CHECK][]         = [
+                        self::WARNING_NOTFOUND,
                         $searchOption['name'] . "='$value'",
                     ];
                 }
@@ -736,12 +753,12 @@ class PluginDatainjectionCommonInjectionLib
     }
 
     /**
-    * Add additional parameters needed for dropdown import
-    *
-    * @param string $itemtype dropdrown's itemtype
-    *
-    * @return array with additional options to be added
-   **/
+     * Add additional parameters needed for dropdown import
+     *
+     * @param string $itemtype dropdrown's itemtype
+     *
+     * @return array with additional options to be added
+     **/
     private function addExternalDropdownParameters($itemtype)
     {
         /** @var DBmysql $DB */
@@ -757,12 +774,12 @@ class PluginDatainjectionCommonInjectionLib
                     case 'manufacturer':
                         if (intval($values[$field]) > 0) {
                             $external[$addvalue]
-                            = $DB->escape(
-                                Dropdown::getDropdownName(
-                                    'glpi_manufacturers',
-                                    $values[$field],
-                                ),
-                            );
+                                = $DB->escape(
+                                    Dropdown::getDropdownName(
+                                        'glpi_manufacturers',
+                                        $values[$field],
+                                    ),
+                                );
                             break;
                         }
                         // TODO: is fall-through intentional here ?
@@ -780,13 +797,13 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Find a user. Look for login OR firstname + lastname OR lastname + firstname
-    *
-    * @param string $value the user to look for
-    * @param int|string $entity the entity where the user should have right
-    *
-    * @return int|string the user ID if found or ''
-   **/
+     * Find a user. Look for login OR firstname + lastname OR lastname + firstname
+     *
+     * @param string $value the user to look for
+     * @param int|string $entity the entity where the user should have right
+     *
+     * @return int|string the user ID if found or ''
+     **/
     private static function findUser($value, $entity)
     {
         /** @var DBmysql $DB */
@@ -813,13 +830,13 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Find a user. Look for login OR firstname + lastname OR lastname + firstname
-    *
-    * @param string $value the user to look for
-    * @param int|string $entity the entity where the user should have right
-    *
-    * @return int|string the user ID if found or ''
-   */
+     * Find a user. Look for login OR firstname + lastname OR lastname + firstname
+     *
+     * @param string $value the user to look for
+     * @param int|string $entity the entity where the user should have right
+     *
+     * @return int|string the user ID if found or ''
+     */
     private static function findContact($value, $entity)
     {
         /** @var DBmysql $DB */
@@ -842,15 +859,15 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Find id for a single type
-    *
-    * @param CommonDBTM $item the CommonDBTM item representing an itemtype
-    * @param array $searchOption searchOption related to the item
-    * @param int|string $entity the current entity
-    * @param string $value the name of the item for which id must be returned
-    *
-    * @return int|string the id of the item found
-   **/
+     * Find id for a single type
+     *
+     * @param CommonDBTM $item the CommonDBTM item representing an itemtype
+     * @param array $searchOption searchOption related to the item
+     * @param int|string $entity the current entity
+     * @param string $value the name of the item for which id must be returned
+     *
+     * @return int|string the id of the item found
+     **/
     private static function findSingle($item, $searchOption, $entity, $value)
     {
         /** @var DBmysql $DB */
@@ -886,12 +903,12 @@ class PluginDatainjectionCommonInjectionLib
     }
 
     /**
-    * Get values to inject for an itemtype
-    *
-    * @param string $itemtype
-    *
-    * @return string|false an array with all values for this itemtype
-   **/
+     * Get values to inject for an itemtype
+     *
+     * @param string $itemtype
+     *
+     * @return string|false an array with all values for this itemtype
+     **/
     public function getValuesForItemtype($itemtype)
     {
 
@@ -900,12 +917,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get values to inject for an itemtype
-    *
-    * @param string $itemtype
-    *
-    * @return string|false an array with all values for this itemtype
-   **/
+     * Get values to inject for an itemtype
+     *
+     * @param string $itemtype
+     *
+     * @return string|false an array with all values for this itemtype
+     **/
     private function getValueByItemtypeAndName($itemtype, $field)
     {
 
@@ -918,12 +935,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Unset a value to inject for an itemtype
-    *
-    * @param string $itemtype
-    *
-    * @return void nothing
-   **/
+     * Unset a value to inject for an itemtype
+     *
+     * @param string $itemtype
+     *
+     * @return void nothing
+     **/
     private function unsetValue($itemtype, $field)
     {
 
@@ -993,13 +1010,13 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get a template name by giving his ID
-    *
-    * @param string $itemtype the objet's type
-    * @param string $name the template's name
-    *
-    * @return string|false name of the template or false is no template found
-   **/
+     * Get a template name by giving his ID
+     *
+     * @param string $itemtype the objet's type
+     * @param string $name the template's name
+     *
+     * @return string|false name of the template or false is no template found
+     **/
     private static function getTemplateIDByName($itemtype, $name)
     {
         /** @var DBmysql $DB */
@@ -1028,10 +1045,10 @@ class PluginDatainjectionCommonInjectionLib
     //because dictionnaries need to be process in a specific order
 
     /**
-    * First pass of data reformat : check values like NULL or values coming from dropdown tables
-    *
-    * @return void nothing
-   **/
+     * First pass of data reformat : check values like NULL or values coming from dropdown tables
+     *
+     * @return void nothing
+     **/
     private function reformatFirstPass()
     {
 
@@ -1055,10 +1072,10 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Second pass of reformat : check if the itemtype needs specific reformat (like Software)
-    *
-    * @return void nothing
-   **/
+     * Second pass of reformat : check if the itemtype needs specific reformat (like Software)
+     *
+     * @return void nothing
+     **/
     private function reformatSecondPass()
     {
 
@@ -1073,8 +1090,8 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Third pass of reformat : data, mac address & floats
-   */
+     * Third pass of reformat : data, mac address & floats
+     */
     private function reformatThirdPass()
     {
         /** @var array $CFG_GLPI */
@@ -1118,11 +1135,11 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Perform field reformat (if needed)
-    * Composed of 3 passes (one is optional, and depends on the itemtype to inject)
-    *
-    * @return void nothing
-   **/
+     * Perform field reformat (if needed)
+     * Composed of 3 passes (one is optional, and depends on the itemtype to inject)
+     *
+     * @return void nothing
+     **/
     private function reformat()
     {
 
@@ -1134,16 +1151,16 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Reformat float value. Input could be :
-    * xxxx.xx
-    * xx,xxx.xx
-    * xxxx,xx
-    *
-    * @param float|array $value : the float to reformat
-    * @param string $format the float format
-    *
-    * @return float|array modified as expected in GLPI
-   **/
+     * Reformat float value. Input could be :
+     * xxxx.xx
+     * xx,xxx.xx
+     * xxxx,xx
+     *
+     * @param float|array $value : the float to reformat
+     * @param string $format the float format
+     *
+     * @return float|array modified as expected in GLPI
+     **/
     private static function reformatFloat($value, $format)
     {
 
@@ -1156,7 +1173,7 @@ class PluginDatainjectionCommonInjectionLib
             case self::FLOAT_TYPE_COMMA:
                 $value = str_replace(
                     [" ", ","],
-                    ["","."],
+                    ["", "."],
                     $value,
                 );
                 break;
@@ -1175,12 +1192,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Reformat date from dd-mm-yyyy to yyyy-mm-dd
-    *
-    * @param string $original_date the original date
-    *
-    * @return string the date reformated, if needed
-   **/
+     * Reformat date from dd-mm-yyyy to yyyy-mm-dd
+     *
+     * @param string $original_date the original date
+     *
+     * @return string the date reformated, if needed
+     **/
     private static function reformatDate($original_date, $date_format)
     {
 
@@ -1222,12 +1239,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Reformat mac adress if mac doesn't contains : or - as seperator
-    *
-    * @param string $mac the original mac address
-    *
-    * @return string the mac address modified, if needed
-   **/
+     * Reformat mac adress if mac doesn't contains : or - as seperator
+     *
+     * @param string $mac the original mac address
+     *
+     * @return string the mac address modified, if needed
+     **/
     private static function reformatMacAddress($mac)
     {
 
@@ -1254,10 +1271,10 @@ class PluginDatainjectionCommonInjectionLib
     //------------------------------------------------//
 
     /**
-    * Check all data to be imported
-    *
-    * @return void nothing
-   **/
+     * Check all data to be imported
+     *
+     * @return void nothing
+     **/
     private function check()
     {
 
@@ -1290,7 +1307,8 @@ class PluginDatainjectionCommonInjectionLib
                         $value,
                         $mandatory,
                     );
-                    $this->results[self::ACTION_CHECK][] = [$check_result,
+                    $this->results[self::ACTION_CHECK][] = [
+                        $check_result,
                         $field . "='$value'",
                     ];
 
@@ -1306,12 +1324,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Is a value a float ?
-    *
-    * @param mixed $val the value to check
-    *
-    * @return boolean true if it's a float, false otherwise
-    */
+     * Is a value a float ?
+     *
+     * @param mixed $val the value to check
+     *
+     * @return boolean true if it's a float, false otherwise
+     */
     private function isFloat($val)
     {
 
@@ -1319,12 +1337,12 @@ class PluginDatainjectionCommonInjectionLib
     }
 
     /**
-    * Is a value an integer ?
-    *
-    * @param mixed $val the value to check
-    *
-    * @return boolean true if it's an integer, false otherwise
-    */
+     * Is a value an integer ?
+     *
+     * @param mixed $val the value to check
+     *
+     * @return boolean true if it's an integer, false otherwise
+     */
     private function isInteger($val)
     {
 
@@ -1332,16 +1350,16 @@ class PluginDatainjectionCommonInjectionLib
     }
 
     /**
-    * Check one data
-    *
-    * @param PluginDatainjectionInjectionInterface $injectionClass the injection class
-    * @param array $option the option associated with the field
-    * @param string $field_name the field name
-    * @param mixed $data the data to check
-    * @param boolean $mandatory is the field mandatory
-    *
-    * @return int the result of the check
-   **/
+     * Check one data
+     *
+     * @param PluginDatainjectionInjectionInterface $injectionClass the injection class
+     * @param array $option the option associated with the field
+     * @param string $field_name the field name
+     * @param mixed $data the data to check
+     * @param boolean $mandatory is the field mandatory
+     *
+     * @return int the result of the check
+     **/
     private function checkType($injectionClass, $option, $field_name, $data, $mandatory)
     {
 
@@ -1421,10 +1439,10 @@ class PluginDatainjectionCommonInjectionLib
     //------------------------------------------------//
 
     /**
-    * Add fields needed for all type injection
-    *
-    * @return void nothing
-   **/
+     * Add fields needed for all type injection
+     *
+     * @return void nothing
+     **/
     private function addNecessaryFields()
     {
 
@@ -1443,13 +1461,13 @@ class PluginDatainjectionCommonInjectionLib
     }
 
     /**
-    * Add fields needed to inject and itemtype
-    *
-    * @param object $injectionClass class which represents the object to inject
-    * @param string $itemtype the itemtype to inject
-    *
-    * @return void nothing
-   **/
+     * Add fields needed to inject and itemtype
+     *
+     * @param object $injectionClass class which represents the object to inject
+     * @param string $itemtype the itemtype to inject
+     *
+     * @return void nothing
+     **/
     private function addNeededFields($injectionClass, $itemtype)
     {
 
@@ -1485,10 +1503,10 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Check value before processing import. Last change to stop import of data
-    *
-    * @return bool
-   **/
+     * Check value before processing import. Last change to stop import of data
+     *
+     * @return bool
+     **/
     private function lastCheckBeforeProcess($injectionClass, $values)
     {
 
@@ -1505,10 +1523,10 @@ class PluginDatainjectionCommonInjectionLib
     //------------------------------------------------//
 
     /**
-    * Process of inject data into GLPI
-    *
-    * @return array which contains the injection results
-   **/
+     * Process of inject data into GLPI
+     *
+     * @return array which contains the injection results
+     **/
     public function processAddOrUpdate()
     {
         $process  = false;
@@ -1557,7 +1575,7 @@ class PluginDatainjectionCommonInjectionLib
             } else { //Item found in DB
                 $this->results['type'] = self::IMPORT_UPDATE;
                 $this->results[$this->primary_type]
-                        = $this->getValueByItemtypeAndName($this->primary_type, 'id');
+                    = $this->getValueByItemtypeAndName($this->primary_type, 'id');
 
                 if ($this->rights['can_update']) {
                     $add = false;
@@ -1650,15 +1668,15 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Perform data injection into GLPI DB
-    *
-    * @param PluginDatainjectionInjectionInterface $injectionClass class which represents the object to inject
-    * @param CommonDBTM $item the CommonDBTM object representing the itemtype to inject
-    * @param array|string|false $values the values to inject
-    * @param boolean $add true to insert an object, false to update an existing object
-    *
-    * @return int|string the id of the object added or updated
-   **/
+     * Perform data injection into GLPI DB
+     *
+     * @param PluginDatainjectionInjectionInterface $injectionClass class which represents the object to inject
+     * @param CommonDBTM $item the CommonDBTM object representing the itemtype to inject
+     * @param array|string|false $values the values to inject
+     * @param boolean $add true to insert an object, false to update an existing object
+     *
+     * @return int|string the id of the object added or updated
+     **/
     private function effectiveAddOrUpdate($injectionClass, $item, $values, $add = true)
     {
 
@@ -1755,10 +1773,10 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Add optional informations filled by the user
-    *
-    * @return void nothing
-   **/
+     * Add optional informations filled by the user
+     *
+     * @return void nothing
+     **/
     private function addOptionalInfos()
     {
 
@@ -1787,21 +1805,21 @@ class PluginDatainjectionCommonInjectionLib
     }
 
     /**
-    * If an optional info need more processing (for example password)
-    *
-    * @param  $itemtype being injected
-    * @param  $field the optional info field
-    * @param  $value the optional info value
-    * @return void nothing
-    */
+     * If an optional info need more processing (for example password)
+     *
+     * @param  $itemtype being injected
+     * @param  $field the optional info field
+     * @param  $value the optional info value
+     * @return void nothing
+     */
     protected function addSpecificOptionalInfos($itemtype, $field, $value) {}
 
     /**
-    * Process dictionnaries if needed
-    *
-    * @since  2.1.6
-    * @return bool
-    */
+     * Process dictionnaries if needed
+     *
+     * @since  2.1.6
+     * @return bool
+     */
     protected function processDictionnariesIfNeeded()
     {
 
@@ -1815,10 +1833,10 @@ class PluginDatainjectionCommonInjectionLib
     }
 
     /**
-    * Manage fields tagged as relations
-    *
-    * @return void nothing
-   **/
+     * Manage fields tagged as relations
+     *
+     * @return void nothing
+     **/
     private function manageRelations()
     {
 
@@ -1852,13 +1870,13 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Function to check if the data to inject already exists in DB
-    *
-    * @param object $injectionClass which represents type to inject
-    * @param string $itemtype the itemtype to inject
-    *
-    * @return void nothing
-   **/
+     * Function to check if the data to inject already exists in DB
+     *
+     * @param object $injectionClass which represents type to inject
+     * @param string $itemtype the itemtype to inject
+     *
+     * @return void nothing
+     **/
     private function dataAlreadyInDB($injectionClass, $itemtype)
     {
         /** @var DBmysql $DB */
@@ -1902,7 +1920,7 @@ class PluginDatainjectionCommonInjectionLib
                 //If it's a computer device
                 if ($item instanceof CommonDevice) {
                     $sql .= " WHERE `designation` = '" .
-                    $this->getValueByItemtypeAndName($itemtype, 'designation') . "'";
+                        $this->getValueByItemtypeAndName($itemtype, 'designation') . "'";
                 } elseif ($item instanceof CommonDBRelation) {
                     //Type is a relation : check it this relation still exists
                     //Define the side of the relation to use
@@ -1919,13 +1937,13 @@ class PluginDatainjectionCommonInjectionLib
                         $destination_itemtype = $item::$itemtype_2;
                     }
                     $where .= " AND `$source_id`='" .
-                    $this->getValueByItemtypeAndName($itemtype, $source_id) . "'";
+                        $this->getValueByItemtypeAndName($itemtype, $source_id) . "'";
                     if ($item->isField('itemtype')) {
                         $where .= " AND `$source_itemtype`='" .
-                        $this->getValueByItemtypeAndName($itemtype, $source_itemtype) . "'";
+                            $this->getValueByItemtypeAndName($itemtype, $source_itemtype) . "'";
                     }
                     $where .= " AND `" . $destination_id . "`='" .
-                    $this->getValueByItemtypeAndName($itemtype, $destination_id) . "'";
+                        $this->getValueByItemtypeAndName($itemtype, $destination_id) . "'";
                     $sql   .= " WHERE 1 " . $where;
                 } else {
                     //Type is not a relation
@@ -1957,7 +1975,7 @@ class PluginDatainjectionCommonInjectionLib
                         } else {
                             //Type cannot be recursive
                             $where_entity = " AND `entities_id` = '" .
-                            $this->getValueByItemtypeAndName($itemtype, 'entities_id') . "'";
+                                $this->getValueByItemtypeAndName($itemtype, 'entities_id') . "'";
                         }
                     } else { //If no entity assignment for this itemtype
                         $where_entity = "";
@@ -2015,12 +2033,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Add fields coming for a template to the values to be injected
-    *
-    * @param string $itemtype the itemtype to inject
-    *
-    * @return void
-   **/
+     * Add fields coming for a template to the values to be injected
+     *
+     * @param string $itemtype the itemtype to inject
+     *
+     * @return void
+     **/
     private function addTemplateFields($itemtype)
     {
 
@@ -2042,8 +2060,8 @@ class PluginDatainjectionCommonInjectionLib
                     if (
                         $value != self::EMPTY_VALUE
                         && (!isset($this->values[$itemtype][$key])
-                        || $this->values[$itemtype][$key] == self::EMPTY_VALUE
-                        || $this->values[$itemtype][$key] == self::DROPDOWN_EMPTY_VALUE)
+                            || $this->values[$itemtype][$key] == self::EMPTY_VALUE
+                            || $this->values[$itemtype][$key] == self::DROPDOWN_EMPTY_VALUE)
                     ) {
                         //$value = Toolbox::addslashes_deep($value);
                         $this->setValueForItemtype($itemtype, $key, $value);
@@ -2075,13 +2093,13 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Log event into the history
-    *
-    * @param object $item the item to log
-    * @param boolean $add true if it's an add, false if it's an update
-    *
-    * @return void nothing
-   **/
+     * Log event into the history
+     *
+     * @param object $item the item to log
+     * @param boolean $add true if it's an add, false if it's an update
+     *
+     * @return void nothing
+     **/
     public static function logAddOrUpdate($item, $add = true)
     {
 
@@ -2096,16 +2114,17 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get label associated with an injection action
-    *
-    * @param string $action code as defined in the head of this file
-    *
-    * @return string label associated with the code
-   **/
+     * Get label associated with an injection action
+     *
+     * @param string $action code as defined in the head of this file
+     *
+     * @return string label associated with the code
+     **/
     public static function getActionLabel($action)
     {
 
-        $actions = [self::IMPORT_ADD    => __('Add'),
+        $actions = [
+            self::IMPORT_ADD    => __('Add'),
             self::IMPORT_UPDATE => __('Update'),
             self::IMPORT_DELETE => __('Delete'),
         ];
@@ -2114,12 +2133,12 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Get label associated with an injection result
-    *
-    * @param string|int $type code as defined in the head of this file
-    *
-    * @return string label associated with the code
-   **/
+     * Get label associated with an injection result
+     *
+     * @param string|int $type code as defined in the head of this file
+     *
+     * @return string label associated with the code
+     **/
     public static function getLogLabel($type)
     {
 
@@ -2175,8 +2194,8 @@ class PluginDatainjectionCommonInjectionLib
     }
 
     /**
-    * Manage search options
-   **/
+     * Manage search options
+     **/
     public static function addToSearchOptions(
         array $type_searchOptions,
         array $options,
@@ -2187,7 +2206,8 @@ class PluginDatainjectionCommonInjectionLib
 
         //Add linkfield for theses fields : no massive action is allowed in the core, but they can be
         //imported using the commonlib
-        $add_linkfield = ['comment' => 'comment',
+        $add_linkfield = [
+            'comment' => 'comment',
             'notepad' => 'notepad',
         ];
 
@@ -2283,13 +2303,13 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * Add necessary search options for template management
-    *
-    * @param PluginDatainjectionInjectionInterface $injectionClass the injection class to use
-    * @param array $tab the options tab, as an array (passed as a reference)
-    *
-    * @return void nothing
-   **/
+     * Add necessary search options for template management
+     *
+     * @param PluginDatainjectionInjectionInterface $injectionClass the injection class to use
+     * @param array $tab the options tab, as an array (passed as a reference)
+     *
+     * @return void nothing
+     **/
     public static function addTemplateSearchOptions($injectionClass, &$tab)
     {
 
@@ -2321,13 +2341,13 @@ class PluginDatainjectionCommonInjectionLib
 
 
     /**
-    * If itemtype injection needs to process things after data is written in DB
-    *
-    * @param PluginDatainjectionInjectionInterface $injectionClass the injection class to use
-    * @param  $add true if an item is created, false if it's an update
-    *
-    * @return void nothing
-   **/
+     * If itemtype injection needs to process things after data is written in DB
+     *
+     * @param PluginDatainjectionInjectionInterface $injectionClass the injection class to use
+     * @param  $add true if an item is created, false if it's an update
+     *
+     * @return void nothing
+     **/
     private function processAfterInsertOrUpdate($injectionClass, $add = true)
     {
 

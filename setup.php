@@ -56,13 +56,14 @@ function plugin_init_datainjection()
     if ($plugin->isActivated("datainjection")) {
         Plugin::registerClass(
             'PluginDatainjectionProfile',
-            ['addtabon' => ['Profile'],
+            [
+                'addtabon' => ['Profile'],
             ],
         );
 
         //If directory doesn't exists, create it
         if (!plugin_datainjection_checkDirectories()) {
-            @ mkdir(PLUGIN_DATAINJECTION_UPLOAD_DIR);
+            @mkdir(PLUGIN_DATAINJECTION_UPLOAD_DIR);
         }
         $PLUGIN_HOOKS["config_page"]['datainjection'] = "front/clientinjection.form.php";
 
@@ -73,7 +74,7 @@ function plugin_init_datainjection()
         }
 
         $PLUGIN_HOOKS['pre_item_purge']['datainjection']
-          = ['Profile' => ['PluginDatainjectionProfile', 'purgeProfiles']];
+            = ['Profile' => ['PluginDatainjectionProfile', 'purgeProfiles']];
 
         // Css file
         if (str_contains($_SERVER['REQUEST_URI'] ?? '', Plugin::getPhpDir('datainjection', false))) {
@@ -116,14 +117,15 @@ function getTypesToInject(): void
 {
     /** @var array $INJECTABLE_TYPES */
     /** @var array $PLUGIN_HOOKS */
-    global $INJECTABLE_TYPES,$PLUGIN_HOOKS;
+    global $INJECTABLE_TYPES, $PLUGIN_HOOKS;
 
     if (count($INJECTABLE_TYPES)) {
         // already populated
         return;
     }
 
-    $INJECTABLE_TYPES = ['PluginDatainjectionCartridgeItemInjection'              => 'datainjection',
+    $INJECTABLE_TYPES = [
+        'PluginDatainjectionCartridgeItemInjection'              => 'datainjection',
         'PluginDatainjectionBudgetInjection'                      => 'datainjection',
         'PluginDatainjectionComputerInjection'                    => 'datainjection',
         'PluginDatainjectionDatabaseInjection'                    => 'datainjection',

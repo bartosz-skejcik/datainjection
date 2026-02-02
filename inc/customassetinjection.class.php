@@ -105,7 +105,9 @@ class PluginDatainjectionCustomAssetInjection extends Asset implements PluginDat
 
         // Fields that cannot be imported for custom assets
         $notimportable = [
-            91, 92, 93, // Related items
+            91,
+            92,
+            93, // Related items
             250, // Asset definition ID (internal)
         ];
 
@@ -348,26 +350,26 @@ class {$class_name} extends {$asset_class} implements PluginDatainjectionInjecti
     {
         \$definition = static::getDefinition();
         \$asset_class = \$definition->getAssetClassName();
-        
+
         \$tab = Search::getOptions(\$asset_class);
-        
+
         \$blacklist = PluginDatainjectionCommonInjectionLib::getBlacklistedOptions(\$asset_class);
         \$notimportable = [250];
-        
+
         \$options['ignore_fields'] = array_merge(\$blacklist, \$notimportable);
-        
+
         \$options['displaytype'] = [
             "dropdown"       => [3, 4, 5, 23, 31, 40, 49, 71],
             "user"           => [24, 70],
             "multiline_text" => [16, 90],
         ];
-        
+
         // Add custom fields display types
         \$custom_fields = \$definition->getCustomFieldDefinitions();
         foreach (\$custom_fields as \$custom_field) {
             \$search_option_id = \$custom_field->getSearchOptionID();
             \$field_type = \$custom_field->fields['type'];
-            
+
             switch (\$field_type) {
                 case 'Glpi\\\\Asset\\\\CustomFieldType\\\\StringType':
                 case 'Glpi\\\\Asset\\\\CustomFieldType\\\\URLType':
@@ -393,19 +395,19 @@ class {$class_name} extends {$asset_class} implements PluginDatainjectionInjecti
                     break;
             }
         }
-        
+
         return PluginDatainjectionCommonInjectionLib::addToSearchOptions(\$tab, \$options, \$this);
     }
 
     public function addOrUpdateObject(\$values = [], \$options = [])
     {
         \$definition = static::getDefinition();
-        
+
         // Process custom fields
         \$custom_fields = \$definition->getCustomFieldDefinitions();
         \$custom_fields_data = [];
         \$itemtype = \$definition->getAssetClassName();
-        
+
         if (isset(\$values[\$itemtype])) {
             foreach (\$custom_fields as \$custom_field) {
                 \$field_name = 'custom_' . \$custom_field->fields['system_name'];
@@ -413,15 +415,15 @@ class {$class_name} extends {$asset_class} implements PluginDatainjectionInjecti
                     \$custom_fields_data[\$custom_field->getID()] = \$values[\$itemtype][\$field_name];
                 }
             }
-            
+
             if (!empty(\$custom_fields_data)) {
                 \$values[\$itemtype]['custom_fields'] = json_encode(\$custom_fields_data);
             }
-            
+
             // Ensure asset definition ID is set
             \$values[\$itemtype]['assets_assetdefinitions_id'] = \$definition->getID();
         }
-        
+
         \$lib = new PluginDatainjectionCommonInjectionLib(\$this, \$values, \$options);
         \$lib->processAddOrUpdate();
         return \$lib->getInjectionResults();
